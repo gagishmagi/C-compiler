@@ -5,7 +5,7 @@ public class DummyParser {
     public static void main(String[] args) {
         try {
             new CLang(new FileInputStream(args[0]));
-            CLang.sourceCodeDef();
+            CLang.sourceCode();
             System.out.println("Parse succeeded !");
         }
         catch (FileNotFoundException e)
@@ -16,6 +16,6 @@ public class DummyParser {
         {
             System.err.println(e.getMessage());
         }
-        
+
     }
 }

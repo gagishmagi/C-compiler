@@ -155,14 +155,14 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTvarDefineDef node, Object data) {
+    public Object visit(ASTvarDefine node, Object data) {
         if (resolve(node.firstToken.next.image) != null) {
             System.err.println(String.format("ERROR: VAR %s REDEFINITION AT %d : %d", node.firstToken.next.image,
             node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
             System.exit(-1);
         }
-        System.out.println("ASTvarDefineDef num of chidren= "+node.children.length);
-        System.out.println("ASTvarDefineDef node children[0]= "+node.children[0]);
+        System.out.println("ASTvarDefine num of chidren= "+node.children.length);
+        System.out.println("ASTvarDefine node children[0]= "+node.children[0]);
 
         boolean isInt = node.firstToken.image.equals("int");
         if (isInt)
@@ -171,15 +171,15 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
             this.stackIndex++;
 
         SymbolTableEntry e = new SymbolTableEntry(node.firstToken.next.image, node.firstToken.image,this.stackIndex);
-        System.out.println("ASTvarDefineDef 1 data= "+data);
+        System.out.println("ASTvarDefine 1 data= "+data);
         //asembly
         //data = super.visit(node, data);
         if (node.children.length > 0)
         {
-            System.out.println("ASTvarDefineDef 1 offset= "+e.offset);
+            System.out.println("ASTvarDefine 1 offset= "+e.offset);
             data = node.children[0].jjtAccept(this, data);
-           // System.out.println("ASTvarDefineDef 2 data= "+data);
-            System.out.println("ASTvarDefineDef 2 offset= "+e.offset);
+           // System.out.println("ASTvarDefine 2 data= "+data);
+            System.out.println("ASTvarDefine 2 offset= "+e.offset);
             _text.add("pop rax");
             _text.add(String.format("mov %s [rbp - %d], %s", isInt ? "dword" : "byte", e.offset, isInt ? "eax" : "al"));
         }
@@ -190,12 +190,12 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTunaryExpressionDef node, Object data) {
+    public Object visit(ASTunaryExpression node, Object data) {
         return super.visit(node, data);
     }
 
     @Override
-    public Object visit(ASTaddExpressionDef node, Object data) {
+    public Object visit(ASTaddExpression node, Object data) {
         data = node.children[0].jjtAccept(this, data);
         if (node.children.length > 1)
         {
@@ -209,7 +209,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTassignExpressionDef node, Object data) {
+    public Object visit(ASTassignExpression node, Object data) {
         if (resolve(node.firstToken.image) == null) {
             System.err.println(String.format("ASSING ERROR: VAR %s ISNT DEFINED AT %d : %d", node.firstToken.image,
                     node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
@@ -219,7 +219,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTconstExpressionDef node, Object data) {
+    public Object visit(ASTconstExpression node, Object data) {
         if (node.firstToken.kind == CLang.ID) {
             SymbolTableEntry e = resolve(node.firstToken.image);
             SymbolTableEntry var =resolve(node.firstToken.next.next.image);
@@ -229,8 +229,8 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
                 System.exit(-1);
             }
 
-            System.out.println("ASTconstExpressionDef e = " + e);
-            System.out.println("ASTconstExpressionDef var = " + var);
+            System.out.println("ASTconstExpression e = " + e);
+            System.out.println("ASTconstExpression var = " + var);
 
             boolean isInt = e.type.equals("int");
 
@@ -239,7 +239,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
             _text.add(String.format("mov %s, %s [rbp - %d]", isInt ? "eax" : "al", isInt ? "dword" : "byte", e.offset));
             _text.add("push rax");
         }
-        System.out.println("ASTconstExpressionDef no if");
+        System.out.println("ASTconstExpression no if");
 
 
 
@@ -247,8 +247,8 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTfunctionDef node, Object data) {
-        System.out.println("ASTfunctionDef");
+    public Object visit(ASTfunction node, Object data) {
+        System.out.println("ASTfunction");
         if (resolve(node.firstToken.next.image) != null) {
             System.err.println(String.format("ERROR: VAR %s REDEFINITION AT %d : %d", node.firstToken.next.image,
                     node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
@@ -275,7 +275,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTfunctionCallDef node, Object data)
+    public Object visit(ASTfunctionCall node, Object data)
     {
         if (resolveFunc(node.firstToken.image) == null) {
             System.err.println(String.format("ERROR: Function %s NOT DEFINED AT %d : %d", node.firstToken.image,
@@ -288,7 +288,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTparamDef node, Object data) {
+    public Object visit(ASTparam node, Object data) {
         Object res = super.visit(node, data);
 
         SymbolTableEntry e = new SymbolTableEntry(node.firstToken.next.image, node.firstToken.image, this.stackIndex);
@@ -300,9 +300,9 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTStatementBlockDef node, Object data) {
+    public Object visit(ASTStatementBlock node, Object data) {
         ++this.index;
-        System.out.println("StatementBlockDef");
+        System.out.println("StatementBlock");
         HashMap<String, SymbolTableEntry> s = new HashMap<>();
         this.symbols.add(s);
 
@@ -315,8 +315,8 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTStatementDef node, Object data) {
-        System.out.println("ASTStatementDef= "+node.firstToken.image);
+    public Object visit(ASTStatement node, Object data) {
+        System.out.println("ASTStatement= "+node.firstToken.image);
 
         boolean isIf = node.firstToken.image.equals("if");
         boolean isFor = node.firstToken.image.equals("for");

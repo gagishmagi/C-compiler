@@ -60,149 +60,149 @@ TOKEN: {
 
 void Start() : {}
 {
-    (sourceCodeDef())*
+    (sourceCode())*
 }
 
-void sourceCodeDef() : {}
+void sourceCode() : {}
 {
-    LOOKAHEAD( varDefineDef() <SEMICOLON> ) varDefineDef() <SEMICOLON> | functionDef()
+    LOOKAHEAD( varDefine() <SEMICOLON> ) varDefine() <SEMICOLON> | function()
 }
 
-void paramListDef() : {}
+void paramList() : {}
 {
-    paramDef() (<COMMA> paramDef())*
+    param() (<COMMA> param())*
 }
 
-void paramDef() : {}
+void param() : {}
 {
     <TYPE> <ID>
 }
 
-void functionDef() : {}
+void function() : {}
 {
-    <TYPE> <ID> <LRBRACKET> [paramListDef()] <RRBRACKET> StatementBlockDef()
+    <TYPE> <ID> <LRBRACKET> [paramList()] <RRBRACKET> StatementBlock()
 }
 
-void varAssignDefInInit() : {}
+void varAssignInInit() : {}
 {
-    <ASSIGN> expressionDef()
+    <ASSIGN> expression()
 }
 
-void varAssignDef() : {}
+void varAssign() : {}
 {
-    <ID> <ASSIGN> expressionDef()
+    <ID> <ASSIGN> expression()
 }
 
-void varDefineDef() : {}
+void varDefine() : {}
 {
-    <TYPE> <ID> [varAssignDefInInit()]
+    <TYPE> <ID> [varAssignInInit()]
 }
 
 
-void StatementBlockDef() : {}
+void StatementBlock() : {}
 {
-    <LCBRACKET> (StatementDef())* <RCBRACKET>
+    <LCBRACKET> (Statement())* <RCBRACKET>
 }
 
-void StatementDef() : {}
+void Statement() : {}
 {
-    varDefineDef() <SEMICOLON> |
-    expressionDef() <SEMICOLON> |
-    IfStatementDef()            |
-    WhileStatementDef()         |
-    ForStatementDef()           |
+    varDefine() <SEMICOLON> |
+    expression() <SEMICOLON> |
+    IfStatement()            |
+    WhileStatement()         |
+    ForStatement()           |
     ReturnStatement() <SEMICOLON>
 }
 
-void IfStatementDef() : {}
+void IfStatement() : {}
 {
-    <IF> <LRBRACKET> expressionDef() <RRBRACKET> (StatementBlockDef() | StatementDef())
+    <IF> <LRBRACKET> expression() <RRBRACKET> (StatementBlock() | Statement())
 }
 
-void WhileStatementDef() : {}
+void WhileStatement() : {}
 {
-    <WHILE> <LRBRACKET> expressionDef() <RRBRACKET> (StatementBlockDef() | StatementDef())
+    <WHILE> <LRBRACKET> expression() <RRBRACKET> (StatementBlock() | Statement())
 }
 
-void ForStatementDef() : {}
+void ForStatement() : {}
 {
-    <FOR> <LRBRACKET> varDefineDef() <SEMICOLON> expressionDef() <SEMICOLON> expressionDef() <RRBRACKET> (StatementBlockDef() | StatementDef())
+    <FOR> <LRBRACKET> varDefine() <SEMICOLON> expression() <SEMICOLON> expression() <RRBRACKET> (StatementBlock() | Statement())
 }
 
 void ReturnStatement() : {}
 {
-    <RETURN> expressionDef()
+    <RETURN> expression()
 }
 
-void expressionDef() : {}
+void expression() : {}
 {
-    LOOKAHEAD(assignExpressionDef()) assignExpressionDef() |
-    boolExpressionDef()
+    LOOKAHEAD(assignExpression()) assignExpression() |
+    boolExpression()
 }
 
-void functionCallDef() : {}
+void functionCall() : {}
 {
-    <ID> <LRBRACKET> [expressionDef() (<COMMA> expressionDef())*] <RRBRACKET>
+    <ID> <LRBRACKET> [expression() (<COMMA> expression())*] <RRBRACKET>
 }
 
-void assignExpressionDef() : {}
+void assignExpression() : {}
 {
-    <ID> <ASSIGN> expressionDef()
+    <ID> <ASSIGN> expression()
 }
 
-void boolExpressionDef() : {}
+void boolExpression() : {}
 {
-    binaryBoolExpressionOrDef()
+    binaryBoolExpressionOr()
 }
 
-void binaryBoolExpressionOrDef() : {}
+void binaryBoolExpressionOr() : {}
 {
-    binaryBoolExpressionAndDef() [ <OR> binaryBoolExpressionOrDef() ]
+    binaryBoolExpressionAnd() [ <OR> binaryBoolExpressionOr() ]
 }
 
-void binaryBoolExpressionAndDef() : {}
+void binaryBoolExpressionAnd() : {}
 {
-    binaryExpressionEqDef() [ <AND> binaryBoolExpressionAndDef() ]
+    binaryExpressionEq() [ <AND> binaryBoolExpressionAnd() ]
 }
 
-void binaryExpressionEqDef() : {}
+void binaryExpressionEq() : {}
 {
-    binaryBoolExpressionCompareDef() [ (<EQ> | <NEQ> ) binaryExpressionEqDef() ]
+    binaryBoolExpressionCompare() [ (<EQ> | <NEQ> ) binaryExpressionEq() ]
 }
 
-void binaryBoolOperatorCompareDef() : {}
+void binaryBoolOperatorCompare() : {}
 {
 
     <LT> | <LTE> | <GT> | <GTE>
 }
 
-void binaryBoolExpressionCompareDef() : {}
+void binaryBoolExpressionCompare() : {}
 {
-    addExpressionDef() [ binaryBoolOperatorCompareDef() binaryBoolExpressionCompareDef() ]
+    addExpression() [ binaryBoolOperatorCompare() binaryBoolExpressionCompare() ]
 }
 
-void addExpressionDef() : {}
+void addExpression() : {}
 {
-    mulExpressionDef() [ (<ADD> | <SUB>) addExpressionDef() ]
+    mulExpression() [ (<ADD> | <SUB>) addExpression() ]
 }
 
-void mulExpressionDef() : {}
+void mulExpression() : {}
 {
-    unaryExpressionDef() [ (<MUL> | <DIV> | <MOD>) mulExpressionDef() ]
+    unaryExpression() [ (<MUL> | <DIV> | <MOD>) mulExpression() ]
 }
 
-void unaryExpressionDef() : {}
+void unaryExpression() : {}
 {
     LOOKAHEAD(2)
-    functionCallDef() |
-    constExpressionDef() |
-    <NOT> unaryExpressionDef()                      |
-    <LRBRACKET> expressionDef() <RRBRACKET>
+    functionCall() |
+    constExpression() |
+    <NOT> unaryExpression()                      |
+    <LRBRACKET> expression() <RRBRACKET>
 
 
 }
 
-void constExpressionDef() : {}
+void constExpression() : {}
 {
     <ID>                                        |
     <NUMBER>                                    |
