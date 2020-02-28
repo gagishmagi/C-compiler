@@ -4,60 +4,6 @@ public class CLang {
 }
 PARSER_END(CLang)
 
-SKIP : {
- " "
-|  "\t"
-|  "\n"
-|  "\r"
-|  <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
-|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
-}
-
-TOKEN : {
-    <TYPE: <INT> | <CHAR> | <VOID> >    |
-    <IF:   "if"  >                      |
-    <WHILE: "while" >                   |
-    <FOR:   "for" >                     |
-    <#INT: "int" >                      |
-    <#CHAR: "char" >                    |
-    <#VOID: "void" >                    |
-    <RETURN: "return" >
-}
-
-TOKEN: {
-    <ID: <LETTER> (<LETTER> | <DIGIT> | <ZERO>)* >                  |
-    <NUMBER: <DIGIT> (<DIGIT> | <ZERO>)* | <ZERO> >                          |
-    <CHAR_VALUE: <APSOTREPHE> (<LETTER> | <DIGIT>) <APSOTREPHE> >   |
-    <#LETTER: ["a"-"z","A"-"Z"] >                                   |
-    <#DIGIT: ["1"-"9"] >                                            |
-    <#ZERO: "0" >
-}
-
-TOKEN: {
-    <LRBRACKET: "(" > |
-    <RRBRACKET: ")" > |
-    <COMMA:     "," > |
-    <LCBRACKET: "{" > |
-    <RCBRACKET: "}" > |
-    <SEMICOLON: ";" > |
-    <ASSIGN:    "=" > |
-    <APSOTREPHE:"'" > |
-    <EQ:       "==" > |
-    <LT:       "<"  > |
-    <LTE:      "<=" > |
-    <GT:       ">"  > |
-    <GTE:      ">=" > |
-    <NOT:      "!"  > |
-    <NEQ:      "!=" > |
-    <AND:      "&&" > |
-    <OR:       "||" > |
-    <ADD:       "+" > |
-    <SUB:       "-" > |
-    <MUL:       "*" > |
-    <DIV:       "/" > |
-    <MOD:       "%" >
-}
-
 void Start() : {}
 {
     (sourceCode())*
@@ -83,9 +29,10 @@ void function() : {}
     <TYPE> <ID> <LRBRACKET> [paramList()] <RRBRACKET> StatementBlock()
 }
 
-void varAssignInInit() : {}
+
+void varDefine() : {}
 {
-    <ASSIGN> expression()
+    <TYPE> <ID> [varAssignInInit()]
 }
 
 void varAssign() : {}
@@ -93,25 +40,9 @@ void varAssign() : {}
     <ID> <ASSIGN> expression()
 }
 
-void varDefine() : {}
+void varAssignInInit() : {}
 {
-    <TYPE> <ID> [varAssignInInit()]
-}
-
-
-void StatementBlock() : {}
-{
-    <LCBRACKET> (Statement())* <RCBRACKET>
-}
-
-void Statement() : {}
-{
-    varDefine() <SEMICOLON> |
-    expression() <SEMICOLON> |
-    IfStatement()            |
-    WhileStatement()         |
-    ForStatement()           |
-    ReturnStatement() <SEMICOLON>
+    <ASSIGN> expression()
 }
 
 void IfStatement() : {}
@@ -134,15 +65,31 @@ void ReturnStatement() : {}
     <RETURN> expression()
 }
 
-void expression() : {}
+void Statement() : {}
 {
-    LOOKAHEAD(assignExpression()) assignExpression() |
-    boolExpression()
+    varDefine() <SEMICOLON> |
+    expression() <SEMICOLON> |
+    IfStatement()            |
+    WhileStatement()         |
+    ForStatement()           |
+    ReturnStatement() <SEMICOLON>
 }
+
+void StatementBlock() : {}
+{
+    <LCBRACKET> (Statement())* <RCBRACKET>
+}
+
 
 void functionCall() : {}
 {
     <ID> <LRBRACKET> [expression() (<COMMA> expression())*] <RRBRACKET>
+}
+
+void expression() : {}
+{
+    LOOKAHEAD(assignExpression()) assignExpression() |
+    boolExpression()
 }
 
 void assignExpression() : {}
@@ -194,12 +141,10 @@ void mulExpression() : {}
 void unaryExpression() : {}
 {
     LOOKAHEAD(2)
-    functionCall() |
-    constExpression() |
+    functionCall()                               |
+    constExpression()                            |
     <NOT> unaryExpression()                      |
     <LRBRACKET> expression() <RRBRACKET>
-
-
 }
 
 void constExpression() : {}
@@ -209,3 +154,56 @@ void constExpression() : {}
     <CHAR_VALUE>
 }
 
+SKIP : {
+ " "
+|  "\t"
+|  "\n"
+|  "\r"
+|  <"//" (~["\n","\r"])* ("\n" | "\r" | "\r\n")>
+|  <"/*" (~["*"])* "*" ("*" | ~["*","/"] (~["*"])* "*")* "/">
+}
+
+TOKEN : {
+    <TYPE: <INT> | <CHAR> | <VOID> >    |
+    <IF:   "if"  >                      |
+    <WHILE: "while" >                   |
+    <FOR:   "for" >                     |
+    <#INT: "int" >                      |
+    <#CHAR: "char" >                    |
+    <#VOID: "void" >                    |
+    <RETURN: "return" >
+}
+
+TOKEN: {
+    <ID: <LETTER> (<LETTER> | <DIGIT> | <ZERO>)* >                  |
+    <NUMBER: <DIGIT> (<DIGIT> | <ZERO>)* | <ZERO> >                 |
+    <CHAR_VALUE: <APSOTREPHE> (<LETTER> | <DIGIT>) <APSOTREPHE> >   |
+    <#LETTER: ["a"-"z","A"-"Z"] >                                   |
+    <#DIGIT: ["1"-"9"] >                                            |
+    <#ZERO: "0" >
+}
+
+TOKEN: {
+    <LRBRACKET: "(" > |
+    <RRBRACKET: ")" > |
+    <COMMA:     "," > |
+    <LCBRACKET: "{" > |
+    <RCBRACKET: "}" > |
+    <SEMICOLON: ";" > |
+    <ASSIGN:    "=" > |
+    <APSOTREPHE:"'" > |
+    <EQ:       "==" > |
+    <LT:       "<"  > |
+    <LTE:      "<=" > |
+    <GT:       ">"  > |
+    <GTE:      ">=" > |
+    <NOT:      "!"  > |
+    <NEQ:      "!=" > |
+    <AND:      "&&" > |
+    <OR:       "||" > |
+    <ADD:       "+" > |
+    <SUB:       "-" > |
+    <MUL:       "*" > |
+    <DIV:       "/" > |
+    <MOD:       "%" >
+}
