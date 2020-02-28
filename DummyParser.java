@@ -5,7 +5,7 @@ public class DummyParser {
     public static void main(String[] args) {
         try {
             new CLang(new FileInputStream(args[0]));
-            CLang.sourceCode();
+            CLang.CheckSyntax();
             System.out.println("Parse succeeded !");
         }
         catch (FileNotFoundException e)
