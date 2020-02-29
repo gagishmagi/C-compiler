@@ -5,9 +5,14 @@ import java.util.Vector;
 
 public class SymbolTableVisitor extends CLangDefaultVisitor {
 
+    HashMap<String, SymbolTableEntry> functions = new HashMap<String, SymbolTableEntry>();
+    Vector<HashMap<String, SymbolTableEntry>> symbols = new Vector<HashMap<String, SymbolTableEntry>>();
+
     Vector<String> _data;
     Vector<String> _text;
+
     int stackIndex = 0;
+    int index = 0;
 
 
     public static class SymbolTableEntry {
@@ -22,9 +27,6 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
         }
     }
 
-    HashMap<String, SymbolTableEntry> functions = new HashMap<String, SymbolTableEntry>();
-    Vector<HashMap<String, SymbolTableEntry>> symbols = new Vector<HashMap<String, SymbolTableEntry>>();
-    int index = 0;
 
     public SymbolTableVisitor() {
         HashMap<String, SymbolTableEntry> s = new HashMap<>();
@@ -33,8 +35,6 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
         this._data = new Vector<>();
 
     }
-
-
 
     public SymbolTableEntry findSymbol(String s) {
         for (int i = this.index; i >= 0; --i) {
@@ -46,17 +46,16 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
         return null;
     }
 
+    public void changeASymbol(SymbolTableEntry s) {
+        this.symbols.get(index).put(s.name, s);
+    }
+
     public SymbolTableEntry findAFunc(String s) {
         SymbolTableEntry st = this.functions.get(s);
         if(st != null)
             return st;
         return null;
     }
-
-    public void changeASymbol(SymbolTableEntry s) {
-        this.symbols.get(index).put(s.name, s);
-    }
-
 
     public void changeAFunction(SymbolTableEntry s) {
         this.functions.put(s.name, s);
@@ -69,8 +68,8 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
             node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
             System.exit(-1);
         }
-        System.out.println("Abstact Search Tree VarDefine has num of chidren= "+node.children.length);
         System.out.println("Abstact Search Tree VarDefine node data is = "+node.children[0]);
+        System.out.println("Abstact Search Tree VarDefine has num of chidren= "+node.children.length);
 
         boolean isInt = node.firstToken.image.equals("int");
         if (isInt)
@@ -97,11 +96,6 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
         //return super.visit(node, data);
     }
 
-    @Override
-    public Object visit(ASTunaryExpression node, Object data) {
-        // unaray expression if/else style
-        return super.visit(node, data);
-    }
 
     @Override
     public Object visit(ASTaddExpression node, Object data) {
@@ -152,6 +146,13 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
 
+        return super.visit(node, data);
+    }
+
+
+    @Override
+    public Object visit(ASTunaryExpression node, Object data) {
+        // unaray expression if/else style
         return super.visit(node, data);
     }
 
