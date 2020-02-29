@@ -1,6 +1,6 @@
 int main() {
 
-    int x = 9;
+    int x = 10;
 
 /*
     while(x <= 10){
@@ -10,7 +10,7 @@ int main() {
  */
 
 /*
-    for( int i = 0 ; i < 10 ; i = i + 1){
+    for( int i = 0 ; i < x ; i = i + 1){
 
     }
  */
