@@ -11,143 +11,143 @@ void Start() : {}
 
 void CheckSyntax() : {}
 {
-    LOOKAHEAD( varDefine() <SEMICOLON> ) varDefine() <SEMICOLON> | function()
+    LOOKAHEAD( VarDef() <SEMICOLON> ) VarDef() <SEMICOLON> | Func()
 }
 
-void paramList() : {}
+void AllParameters() : {}
 {
-    param() (<COMMA> param())*
+    Parameter() (<COMMA> Parameter())*
 }
 
-void param() : {}
+void Parameter() : {}
 {
     <TYPE> <ID>
 }
 
-void function() : {}
+void Func() : {}
 {
-    <TYPE> <ID> <LRBRACKET> [paramList()] <RRBRACKET> StatementBlock()
+    <TYPE> <ID> <LRBRACKET> [AllParameters()] <RRBRACKET> StmtBlock()
 }
 
 
-void varDefine() : {}
+void VarDef() : {}
 {
-    <TYPE> <ID> [varAssignInInit()]
+    <TYPE> <ID> [VarInitAsgn()]
 }
 
-void varAssign() : {}
+void VarAsgn() : {}
 {
-    <ID> <ASSIGN> expression()
+    <ID> <ASSIGN> Express()
 }
 
-void varAssignInInit() : {}
+void VarInitAsgn() : {}
 {
-    <ASSIGN> expression()
+    <ASSIGN> Express()
 }
 
-void IfStatement() : {}
+void IfStmt() : {}
 {
-    <IF> <LRBRACKET> expression() <RRBRACKET> (StatementBlock() | Statement())
+    <IF> <LRBRACKET> Express() <RRBRACKET> (StmtBlock() | Stmt())
 }
 
-void WhileStatement() : {}
+void WhileStmt() : {}
 {
-    <WHILE> <LRBRACKET> expression() <RRBRACKET> (StatementBlock() | Statement())
+    <WHILE> <LRBRACKET> Express() <RRBRACKET> (StmtBlock() | Stmt())
 }
 
-void ForStatement() : {}
+void ForStmt() : {}
 {
-    <FOR> <LRBRACKET> varDefine() <SEMICOLON> expression() <SEMICOLON> expression() <RRBRACKET> (StatementBlock() | Statement())
+    <FOR> <LRBRACKET> VarDef() <SEMICOLON> Express() <SEMICOLON> Express() <RRBRACKET> (StmtBlock() | Stmt())
 }
 
-void ReturnStatement() : {}
+void ReturnStmt() : {}
 {
-    <RETURN> expression()
+    <RETURN> Express()
 }
 
-void Statement() : {}
+void Stmt() : {}
 {
-    varDefine() <SEMICOLON> |
-    expression() <SEMICOLON> |
-    IfStatement()            |
-    WhileStatement()         |
-    ForStatement()           |
-    ReturnStatement() <SEMICOLON>
+    VarDef() <SEMICOLON> |
+    Express() <SEMICOLON> |
+    IfStmt()            |
+    WhileStmt()         |
+    ForStmt()           |
+    ReturnStmt() <SEMICOLON>
 }
 
-void StatementBlock() : {}
+void StmtBlock() : {}
 {
-    <LCBRACKET> (Statement())* <RCBRACKET>
+    <LCBRACKET> (Stmt())* <RCBRACKET>
 }
 
 
-void functionCall() : {}
+void FuncCall() : {}
 {
-    <ID> <LRBRACKET> [expression() (<COMMA> expression())*] <RRBRACKET>
+    <ID> <LRBRACKET> [Express() (<COMMA> Express())*] <RRBRACKET>
 }
 
-void expression() : {}
+void Express() : {}
 {
-    LOOKAHEAD(assignExpression()) assignExpression() |
-    boolExpression()
+    LOOKAHEAD(AssignExpress()) AssignExpress() |
+    BoolExpress()
 }
 
-void assignExpression() : {}
+void AssignExpress() : {}
 {
-    <ID> <ASSIGN> expression()
+    <ID> <ASSIGN> Express()
 }
 
-void boolExpression() : {}
+void BoolExpress() : {}
 {
-    binaryBoolExpressionOr()
+    BoolExpressOr()
 }
 
-void binaryBoolExpressionOr() : {}
+void BoolExpressOr() : {}
 {
-    binaryBoolExpressionAnd() [ <OR> binaryBoolExpressionOr() ]
+    BoolExpressAnd() [ <OR> BoolExpressOr() ]
 }
 
-void binaryBoolExpressionAnd() : {}
+void BoolExpressAnd() : {}
 {
-    binaryExpressionEq() [ <AND> binaryBoolExpressionAnd() ]
+    BoolExpressEq() [ <AND> BoolExpressAnd() ]
 }
 
-void binaryExpressionEq() : {}
+void BoolExpressEq() : {}
 {
-    binaryBoolExpressionCompare() [ (<EQ> | <NEQ> ) binaryExpressionEq() ]
+    BoolExpressComp() [ (<EQ> | <NEQ> ) BoolExpressEq() ]
 }
 
-void binaryBoolOperatorCompare() : {}
+void BoolCompOper() : {}
 {
 
     <LT> | <LTE> | <GT> | <GTE>
 }
 
-void binaryBoolExpressionCompare() : {}
+void BoolExpressComp() : {}
 {
-    addExpression() [ binaryBoolOperatorCompare() binaryBoolExpressionCompare() ]
+    AddExpress() [ BoolCompOper() BoolExpressComp() ]
 }
 
-void addExpression() : {}
+void AddExpress() : {}
 {
-    mulExpression() [ (<ADD> | <SUB>) addExpression() ]
+    MultExpress() [ (<ADD> | <SUB>) AddExpress() ]
 }
 
-void mulExpression() : {}
+void MultExpress() : {}
 {
-    unaryExpression() [ (<MUL> | <DIV> | <MOD>) mulExpression() ]
+    UnaExpress() [ (<MUL> | <DIV> | <MOD>) MultExpress() ]
 }
 
-void unaryExpression() : {}
+void UnaExpress() : {}
 {
     LOOKAHEAD(2)
-    functionCall()                               |
-    constExpression()                            |
-    <NOT> unaryExpression()                      |
-    <LRBRACKET> expression() <RRBRACKET>
+    FuncCall()                               |
+    ConstExpress()                            |
+    <NOT> UnaExpress()                      |
+    <LRBRACKET> Express() <RRBRACKET>
 }
 
-void constExpression() : {}
+void ConstExpress() : {}
 {
     <ID>                                        |
     <NUMBER>                                    |

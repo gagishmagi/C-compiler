@@ -62,7 +62,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTvarDefine node, Object data) {
+    public Object visit(ASTVarDef node, Object data) {
         if (findSymbol(node.firstToken.next.image) != null) {
             System.err.println(String.format("ERROR: VAR %s REDEFINITION AT %d : %d", node.firstToken.next.image,
             node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
@@ -98,7 +98,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTaddExpression node, Object data) {
+    public Object visit(ASTAddExpress node, Object data) {
         // ADD EXPRESION of 2 numbers
         data = node.children[0].jjtAccept(this, data);
         if (node.children.length > 1)
@@ -113,7 +113,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTassignExpression node, Object data) {
+    public Object visit(ASTAssignExpress node, Object data) {
         if (findSymbol(node.firstToken.image) == null) {
             System.err.println(String.format("ASSING ERROR: VAR %s ISNT DEFINED AT %d : %d", node.firstToken.image,
                     node.firstToken.next.beginLine, node.firstToken.next.beginColumn));
@@ -123,7 +123,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTconstExpression node, Object data) {
+    public Object visit(ASTConstExpress node, Object data) {
         if (node.firstToken.kind == CLang.ID) {
             SymbolTableEntry e = findSymbol(node.firstToken.image);
             SymbolTableEntry var =findSymbol(node.firstToken.next.next.image);
@@ -151,13 +151,13 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTunaryExpression node, Object data) {
+    public Object visit(ASTUnaExpress node, Object data) {
         // unaray expression if/else style
         return super.visit(node, data);
     }
 
     @Override
-    public Object visit(ASTfunction node, Object data) {
+    public Object visit(ASTFunc node, Object data) {
         System.out.println("Abstact Search Tree function");
         if (findSymbol(node.firstToken.next.image) != null) {
             System.err.println(String.format("ERROR: variable %s is not allowed redifination will be at %d : %d", node.firstToken.next.image,
@@ -185,7 +185,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTfunctionCall node, Object data)
+    public Object visit(ASTFuncCall node, Object data)
     {
         System.out.println("Abstact Search Tree functionCall");
         if (findAFunc(node.firstToken.image) == null) {
@@ -199,7 +199,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTparam node, Object data) {
+    public Object visit(ASTParameter node, Object data) {
         System.out.println("Abstact Search Tree paramaters");
         Object res = super.visit(node, data);
 
@@ -212,7 +212,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
 
 
     @Override
-    public Object visit(ASTStatementBlock node, Object data) {
+    public Object visit(ASTStmtBlock node, Object data) {
         ++this.index;
         System.out.println("Abstact Search Tree StatementBlock");
         HashMap<String, SymbolTableEntry> s = new HashMap<>();
@@ -227,7 +227,7 @@ public class SymbolTableVisitor extends CLangDefaultVisitor {
     }
 
     @Override
-    public Object visit(ASTStatement node, Object data) {
+    public Object visit(ASTStmt node, Object data) {
         System.out.println("Abstact Search Tree Statement= "+node.firstToken.image);
 
         boolean isIf = node.firstToken.image.equals("if");
